@@ -99,7 +99,7 @@ jobs:
           # tag: '$(build.my_tag)'
           tag: '$(Build.BuildNumber)'
           target: '$(build.sourceVersion)'
-          assets: '$(Build.ArtifactStagingDirectory)'
+          assets: '$(Build.ArtifactStagingDirectory)/**'
           # title: '$(SBCL_VERSION)$(SBCL_OPTIONS)'
           assetUploadMode: 'replace'
           addChangeLog: false
