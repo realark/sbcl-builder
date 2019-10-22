@@ -25,7 +25,6 @@ jobs:
             echo "---- INSTALL HOMEBREW ----"
             ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
             echo "---- INSTALL DEPENDENCIES ----"
-
             brew install sbcl
         displayName: Mac Install Software
         condition: eq( variables['Agent.OS'], 'Darwin' )
@@ -46,20 +45,6 @@ jobs:
         condition: ne( variables['Agent.OS'], 'Windows_NT' )
       - bash: |
             cd '$(Build.SourcesDirectory)'
-
-            # TODO: rm vv
-            # echo "in directory: `pwd`"
-            # mkdir sbcl
-            # mkdir sbcl/output
-            # mkdir sbcl/output/adir
-            # touch sbcl/output/afile
-            # echo "hello world1" > sbcl/output/afile
-            # touch sbcl/output/adir/anotherfile
-            # echo "hello world2" > sbcl/output/adir/anotherfile
-            # echo "made dir: `ls sbcl/output/`"
-            # echo "made sub-dir: `ls sbcl/output/adir`"
-
-
             git clone https://github.com/sbcl/sbcl
             cd sbcl
             git checkout $(SBCL_VERSION)
@@ -67,24 +52,16 @@ jobs:
             export SBCL_HOME="/c/Program Files/Steel Bank Common Lisp/1.4.14"
             sh make.sh $(SBCL_OPTIONS)
             export SBCL_HOME=""
-            mkdir '$(Build.BinariesDirectory)\output'
-            INSTALL_ROOT='$(Build.BinariesDirectory)/output' sh install.sh
-        displayName: Windows Build Special SBCL
+            mkdir '$(Build.BinariesDirectory)\sbcl-windows64'
+            INSTALL_ROOT='$(Build.BinariesDirectory)/sbcl-windows64' sh install.sh
+        displayName: Windows Build Custom SBCL
         condition: eq( variables['Agent.OS'], 'Windows_NT' )
-      # - task: CopyFiles@2
-      #   # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-      #   displayName: Copy output
-      #   inputs:
-      #     sourceFolder: '$(Build.SourcesDirectory)/sbcl/output'
-      #     contents: |
-      #       **
-      #     targetFolder: '$(Build.BinariesDirectory)/output'
       - task: ArchiveFiles@2
         displayName: Compress build
         inputs:
-          rootFolderOrFile: '$(Build.BinariesDirectory)/output'
+          rootFolderOrFile: '$(Build.BinariesDirectory)/sbcl-windows64'
           archiveType: 'zip'
-          archiveFile: '$(Build.ArtifactStagingDirectory)/output.zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/sbcl-windows64.zip'
       - task: GithubRelease@0
         # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
         inputs:
