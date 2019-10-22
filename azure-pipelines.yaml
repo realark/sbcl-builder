@@ -65,7 +65,7 @@ jobs:
         displayName: Windows Build Special SBCL
         condition: eq( variables['Agent.OS'], 'Windows_NT' )
       - task: CopyFiles@2
-        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+        # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
         displayName: Copy output
         inputs:
           sourceFolder: '$(Build.SourcesDirectory)/sbcl'
@@ -78,7 +78,6 @@ jobs:
         inputs:
           artifactName: sbcl-output
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        # condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
       # - task: GithubRelease@0
       #   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
       #   inputs:
