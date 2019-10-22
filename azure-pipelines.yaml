@@ -55,7 +55,6 @@ jobs:
             mkdir sbcl/output/adir
             touch sbcl/output/afile
             touch sbcl/output/adir/anotherfile
-            sbcl --eval '(format t ~%~%"hello world~%~%")' --eval '(sb-ext:exit)'
 
             # git clone https://github.com/sbcl/sbcl
             # cd sbcl
