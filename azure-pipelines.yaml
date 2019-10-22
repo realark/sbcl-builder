@@ -77,19 +77,19 @@ jobs:
             **
           targetFolder: '$(Build.ArtifactStagingDirectory)'
           # targetFolder: '$(Build.BinariesDirectory)'
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Output'
-        inputs:
-          artifactName: sbcl-output
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      # - task: GithubRelease@0
-      #   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+      # - task: PublishBuildArtifacts@1
+      #   displayName: 'Publish Output'
       #   inputs:
-      #     gitHubConnection: 'realark'
-      #     repositoryName: '$(Build.Repository.Name)'
-      #     action: 'edit'
-      #     target: '$(build.sourceVersion)'
-      #     assets: '$(Build.ArtifactStagingDirectory)/main-$(TARGET).tar.gz'
-      #     title: '$(build.my_tag)'
-      #     assetUploadMode: 'replace'
-      #     addChangeLog: false
+      #     artifactName: sbcl-output
+      #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      - task: GithubRelease@0
+        # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+        inputs:
+          gitHubConnection: 'realark'
+          repositoryName: '$(Build.Repository.Name)'
+          action: 'edit'
+          target: '$(build.sourceVersion)'
+          assets: '$(Build.ArtifactStagingDirectory)/**'
+          title: '$(SBCL_VERSION)$(SBCL_OPTIONS)'
+          assetUploadMode: 'replace'
+          addChangeLog: false
