@@ -1,0 +1,91 @@
+trigger:
+  branches:
+    include: ['master']
+  tags:
+    include: ['*']
+
+variables:
+  SBCL_VERSION: sbcl-1.5.5
+  SBCL_OPTIONS: "--with-sb-thread"
+
+jobs:
+  - job: 'CrossCompile'
+    strategy:
+      matrix:
+        # mac:
+        #   target: 'x86_64-apple-darwin'
+        #   imageName: 'macos-10.13'
+        win:
+          target: 'x86_64-windows-10'
+          imageName: 'vs2017-win2016'
+    pool:
+      vmImage: $(imageName)
+    steps:
+      - script: |
+            echo "---- INSTALL HOMEBREW ----"
+            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+            echo "---- INSTALL DEPENDENCIES ----"
+
+            brew install sbcl
+        displayName: Mac Install Software
+        condition: eq( variables['Agent.OS'], 'Darwin' )
+      - script: |
+            curl -L https://sourceforge.net/projects/sbcl/files/sbcl/1.4.14/sbcl-1.4.14-x86-64-windows-binary.msi/download?use_mirror=pilotfiber > windows.msi
+            msiexec.exe /qn /i windows.msi
+            @echo ##vso[task.prependpath]C:\Program Files\sbcl\bin\
+            @echo ##vso[task.setvariable variable=sbcl_home]C:\Program Files\sbcl\lib\sbcl
+        displayName: Windows Install SBCL
+        condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      - script: |
+            cd $HOME
+            git clone https://github.com/sbcl/sbcl
+            cd sbcl
+            git checkout $(SBCL_VERSION)
+            sh make.sh --prefix=$SBCL_HOME $(SBCL_OPTIONS)
+        displayName: Build Special SBCL
+        condition: ne( variables['Agent.OS'], 'Windows_NT' )
+      - bash: |
+            cd '$(Build.SourcesDirectory)'
+
+            # TODO: rm vv
+            mkdir sbcl
+            mkdir sbcl/output
+            mkdir sbcl/output/adir
+            touch sbcl/output/afile
+            touch sbcl/output/adir/anotherfile
+            sbcl --eval '(format t ~%~%"hello world~%~%")'
+
+            # git clone https://github.com/sbcl/sbcl
+            # cd sbcl
+            # git checkout $(SBCL_VERSION)
+            # export PATH="/c/Program Files/Steel Bank Common Lisp/1.4.14:$PATH"
+            # export SBCL_HOME="/c/Program Files/Steel Bank Common Lisp/1.4.14"
+            # sh make.sh $(SBCL_OPTIONS)
+        displayName: Windows Build Special SBCL
+        condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      - task: CopyFiles@2
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+        displayName: Copy output
+        inputs:
+          sourceFolder: '$(Build.SourcesDirectory)/sbcl'
+          contents: |
+            output
+          targetFolder: '$(Build.ArtifactStagingDirectory)'
+          # targetFolder: '$(Build.BinariesDirectory)'
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Output'
+        inputs:
+          artifactName: sbcl-output
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        # condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+      # - task: GithubRelease@0
+      #   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+      #   inputs:
+      #     gitHubConnection: 'realark'
+      #     repositoryName: '$(Build.Repository.Name)'
+      #     action: 'edit'
+      #     target: '$(build.sourceVersion)'
+      #     assets: '$(Build.ArtifactStagingDirectory)/main-$(TARGET).tar.gz'
+      #     title: '$(build.my_tag)'
+      #     assetUploadMode: 'replace'
+      #     addChangeLog: false
