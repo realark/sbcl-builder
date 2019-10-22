@@ -1,0 +1,6 @@
+* sbcl-builder
+A project to build specified versions of SBCL with custom options.
+
+The idea is to build a specific SBCL in this project, store the artifacts in github releases, then pull those artifacts into other CI jobs.
+
+This saves a significant amount of time for other CI jobs because a custom SBCL only has to be built once instead of every CI run.
