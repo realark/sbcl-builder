@@ -66,7 +66,8 @@ jobs:
             export PATH="/c/Program Files/Steel Bank Common Lisp/1.4.14:$PATH"
             export SBCL_HOME="/c/Program Files/Steel Bank Common Lisp/1.4.14"
             sh make.sh $(SBCL_OPTIONS)
-            mkdir '$(Build.BinariesDirectory)/output'
+            export SBCL_HOME=""
+            mkdir '$(Build.BinariesDirectory)\output'
             INSTALL_ROOT='$(Build.BinariesDirectory)/output' sh install.sh
         displayName: Windows Build Special SBCL
         condition: eq( variables['Agent.OS'], 'Windows_NT' )
