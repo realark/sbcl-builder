@@ -66,16 +66,18 @@ jobs:
             export PATH="/c/Program Files/Steel Bank Common Lisp/1.4.14:$PATH"
             export SBCL_HOME="/c/Program Files/Steel Bank Common Lisp/1.4.14"
             sh make.sh $(SBCL_OPTIONS)
+            mkdir '$(Build.BinariesDirectory)/output'
+            INSTALL_ROOT='$(Build.BinariesDirectory)/output' sh install.sh
         displayName: Windows Build Special SBCL
         condition: eq( variables['Agent.OS'], 'Windows_NT' )
-      - task: CopyFiles@2
-        # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-        displayName: Copy output
-        inputs:
-          sourceFolder: '$(Build.SourcesDirectory)/sbcl/output'
-          contents: |
-            **
-          targetFolder: '$(Build.BinariesDirectory)/output'
+      # - task: CopyFiles@2
+      #   # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+      #   displayName: Copy output
+      #   inputs:
+      #     sourceFolder: '$(Build.SourcesDirectory)/sbcl/output'
+      #     contents: |
+      #       **
+      #     targetFolder: '$(Build.BinariesDirectory)/output'
       - task: ArchiveFiles@2
         displayName: Compress build
         inputs:
