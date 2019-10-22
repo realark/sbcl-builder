@@ -29,14 +29,13 @@ jobs:
             brew install sbcl
         displayName: Mac Install Software
         condition: eq( variables['Agent.OS'], 'Darwin' )
-      # TODO: uncomment vv
-      # - script: |
-      #       curl -L https://sourceforge.net/projects/sbcl/files/sbcl/1.4.14/sbcl-1.4.14-x86-64-windows-binary.msi/download?use_mirror=pilotfiber > windows.msi
-      #       msiexec.exe /qn /i windows.msi
-      #       @echo ##vso[task.prependpath]C:\Program Files\sbcl\bin\
-      #       @echo ##vso[task.setvariable variable=sbcl_home]C:\Program Files\sbcl\lib\sbcl
-      #   displayName: Windows Install SBCL
-      #   condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      - script: |
+            curl -L https://sourceforge.net/projects/sbcl/files/sbcl/1.4.14/sbcl-1.4.14-x86-64-windows-binary.msi/download?use_mirror=pilotfiber > windows.msi
+            msiexec.exe /qn /i windows.msi
+            @echo ##vso[task.prependpath]C:\Program Files\sbcl\bin\
+            @echo ##vso[task.setvariable variable=sbcl_home]C:\Program Files\sbcl\lib\sbcl
+        displayName: Windows Install SBCL
+        condition: eq( variables['Agent.OS'], 'Windows_NT' )
       - script: |
             cd $HOME
             git clone https://github.com/sbcl/sbcl
