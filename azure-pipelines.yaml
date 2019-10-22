@@ -29,14 +29,13 @@ jobs:
             brew install sbcl
         displayName: Mac Install Software
         condition: eq( variables['Agent.OS'], 'Darwin' )
-      # TODO: uncomment vv
-      # - script: |
-      #       curl -L https://sourceforge.net/projects/sbcl/files/sbcl/1.4.14/sbcl-1.4.14-x86-64-windows-binary.msi/download?use_mirror=pilotfiber > windows.msi
-      #       msiexec.exe /qn /i windows.msi
-      #       @echo ##vso[task.prependpath]C:\Program Files\sbcl\bin\
-      #       @echo ##vso[task.setvariable variable=sbcl_home]C:\Program Files\sbcl\lib\sbcl
-      #   displayName: Windows Install SBCL
-      #   condition: eq( variables['Agent.OS'], 'Windows_NT' )
+      - script: |
+            curl -L https://sourceforge.net/projects/sbcl/files/sbcl/1.4.14/sbcl-1.4.14-x86-64-windows-binary.msi/download?use_mirror=pilotfiber > windows.msi
+            msiexec.exe /qn /i windows.msi
+            @echo ##vso[task.prependpath]C:\Program Files\sbcl\bin\
+            @echo ##vso[task.setvariable variable=sbcl_home]C:\Program Files\sbcl\lib\sbcl
+        displayName: Windows Install SBCL
+        condition: eq( variables['Agent.OS'], 'Windows_NT' )
       - script: |
             cd $HOME
             git clone https://github.com/sbcl/sbcl
@@ -49,24 +48,24 @@ jobs:
             cd '$(Build.SourcesDirectory)'
 
             # TODO: rm vv
-            echo "in directory: `pwd`"
-            mkdir sbcl
-            mkdir sbcl/output
-            mkdir sbcl/output/adir
-            touch sbcl/output/afile
-            echo "hello world1" > sbcl/output/afile
-            touch sbcl/output/adir/anotherfile
-            echo "hello world2" > sbcl/output/adir/anotherfile
-            echo "made dir: `ls sbcl/output/`"
-            echo "made sub-dir: `ls sbcl/output/adir`"
+            # echo "in directory: `pwd`"
+            # mkdir sbcl
+            # mkdir sbcl/output
+            # mkdir sbcl/output/adir
+            # touch sbcl/output/afile
+            # echo "hello world1" > sbcl/output/afile
+            # touch sbcl/output/adir/anotherfile
+            # echo "hello world2" > sbcl/output/adir/anotherfile
+            # echo "made dir: `ls sbcl/output/`"
+            # echo "made sub-dir: `ls sbcl/output/adir`"
 
 
-            # git clone https://github.com/sbcl/sbcl
-            # cd sbcl
-            # git checkout $(SBCL_VERSION)
-            # export PATH="/c/Program Files/Steel Bank Common Lisp/1.4.14:$PATH"
-            # export SBCL_HOME="/c/Program Files/Steel Bank Common Lisp/1.4.14"
-            # sh make.sh $(SBCL_OPTIONS)
+            git clone https://github.com/sbcl/sbcl
+            cd sbcl
+            git checkout $(SBCL_VERSION)
+            export PATH="/c/Program Files/Steel Bank Common Lisp/1.4.14:$PATH"
+            export SBCL_HOME="/c/Program Files/Steel Bank Common Lisp/1.4.14"
+            sh make.sh $(SBCL_OPTIONS)
         displayName: Windows Build Special SBCL
         condition: eq( variables['Agent.OS'], 'Windows_NT' )
       - task: CopyFiles@2
@@ -83,11 +82,6 @@ jobs:
           rootFolderOrFile: '$(Build.BinariesDirectory)/output'
           archiveType: 'zip'
           archiveFile: '$(Build.ArtifactStagingDirectory)/output.zip'
-      # - task: PublishBuildArtifacts@1
-      #   displayName: 'Publish Output'
-      #   inputs:
-      #     artifactName: sbcl-output
-      #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       - task: GithubRelease@0
         # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
         inputs:
