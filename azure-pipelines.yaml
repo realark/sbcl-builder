@@ -46,6 +46,8 @@ jobs:
         condition: ne( variables['Agent.OS'], 'Windows_NT' )
       - bash: |
             cd '$(Build.SourcesDirectory)'
+            export PATH="/c/Program Files/Steel Bank Common Lisp/1.4.14:$PATH"
+            export SBCL_HOME="/c/Program Files/Steel Bank Common Lisp/1.4.14"
 
             # TODO: rm vv
             mkdir sbcl
