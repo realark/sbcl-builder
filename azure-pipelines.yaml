@@ -92,13 +92,14 @@ jobs:
       - task: GithubRelease@0
         # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
         inputs:
-          gitHubConnection: 'realark'
+          gitHubConnection: 'realark-publish'
           repositoryName: '$(Build.Repository.Name)'
           action: 'edit'
           tagSource: 'manual'
-          tag: '$(build.my_tag)'
+          # tag: '$(build.my_tag)'
+          tag: '$(Build.BuildNumber)'
           target: '$(build.sourceVersion)'
           assets: '$(Build.ArtifactStagingDirectory)'
-          title: '$(SBCL_VERSION)$(SBCL_OPTIONS)'
+          # title: '$(SBCL_VERSION)$(SBCL_OPTIONS)'
           assetUploadMode: 'replace'
           addChangeLog: false
