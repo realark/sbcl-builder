@@ -76,8 +76,13 @@ jobs:
           sourceFolder: '$(Build.SourcesDirectory)/sbcl/output'
           contents: |
             **
-          targetFolder: '$(Build.ArtifactStagingDirectory)'
-          # targetFolder: '$(Build.BinariesDirectory)'
+          targetFolder: '$(Build.BinariesDirectory)'
+      - task: ArchiveFiles@2
+        displayName: Compress build
+        inputs:
+          rootFolderOrFile: '$(Build.BinariesDirectory)'
+          archiveType: 'zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/output.zip'
       # - task: PublishBuildArtifacts@1
       #   displayName: 'Publish Output'
       #   inputs:
