@@ -89,17 +89,17 @@ jobs:
       #   inputs:
       #     artifactName: sbcl-output
       #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      - task: GithubRelease@0
-        # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-        inputs:
-          gitHubConnection: 'realark-publish'
-          repositoryName: '$(Build.Repository.Name)'
-          action: 'edit'
-          tagSource: 'manual'
-          # tag: '$(build.my_tag)'
-          tag: '$(Build.BuildNumber)'
-          target: '$(build.sourceVersion)'
-          assets: '$(Build.ArtifactStagingDirectory)/**'
-          # title: '$(SBCL_VERSION)$(SBCL_OPTIONS)'
-          assetUploadMode: 'replace'
-          addChangeLog: false
+      # - task: GithubRelease@0
+      #   # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+      #   inputs:
+      #     gitHubConnection: 'realark-publish'
+      #     repositoryName: '$(Build.Repository.Name)'
+      #     action: 'edit'
+      #     tagSource: 'manual'
+      #     # tag: '$(build.my_tag)'
+      #     tag: '$(Build.BuildNumber)'
+      #     target: '$(build.sourceVersion)'
+      #     assets: '$(Build.ArtifactStagingDirectory)/**'
+      #     # title: '$(SBCL_VERSION)$(SBCL_OPTIONS)'
+      #     assetUploadMode: 'replace'
+      #     addChangeLog: false
